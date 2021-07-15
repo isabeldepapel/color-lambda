@@ -1,0 +1,15 @@
+{
+  "name": "color-explorer",
+  "version": "1.0.0",
+  "description": "Flask API wrapper for Harvard Art Museums API color query",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Isabel Suchanek",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.1",
+    "serverless-wsgi": "^1.7.8"
+  }
+}

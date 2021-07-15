@@ -1,0 +1,30 @@
+service: color-explorer
+variablesResolutionMode: 20210326 # necessary for ssm params
+frameworkVersion: '2'
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: us-west-2
+  environment:
+    FOGG_API_KEY: ${ssm:/${self:service}/FOGG_API_KEY}
+    HONEYCOMB_API_KEY: ${ssm:/${self:service}/HONEYCOMB_API_KEY}
+
+functions:
+  api:
+    handler: images.get_artwork_by_color
+    events:
+      - http:
+          path: /images
+          method: GET
+      - http:
+          path: /{proxy+}
+          method: ANY
