@@ -14,13 +14,14 @@ provider:
   runtime: python3.8
   stage: dev
   region: us-west-2
-  environment:
-    FOGG_API_KEY: ${ssm:/${self:service}/FOGG_API_KEY}
-    HONEYCOMB_API_KEY: ${ssm:/${self:service}/HONEYCOMB_API_KEY}
+  lambdaHashingVersion: 20201221
 
 functions:
   api:
     handler: images.get_artwork_by_color
+    environment:
+      FOGG_API_KEY: ${ssm:/${self:service}/FOGG_API_KEY}
+      HONEYCOMB_API_KEY: ${ssm:/${self:service}/HONEYCOMB_API_KEY}
     events:
       - http:
           path: /images

@@ -1,19 +1,17 @@
 [tool.poetry]
 name = "color-explorer"
-version = "0.1.0"
-description = "Flask API wrapper for Harvard Art Museums API using serverless framework"
-authors = ["Isabel Suchanek <isuchanek@gmail.com>"]
+version = "0.0.1"
+description = "Simple lambda wrapping Harvard Art Museums API call using serverless"
+authors = ["isabeldepapel <isuchanek@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.26.0"
-Flask = "1.1.4" # Needs to be pinned to old version for serverless-wsgi to work
 python-dotenv = "^0.18.0"
 honeycomb-beeline = "^2.17.0"
-Werkzeug = "1.0.1" # Needs to be pinned to old version for serverless-wsgi to work
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.9.3"
+pylint = "^2.9.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
