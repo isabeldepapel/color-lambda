@@ -1,3 +1,4 @@
+from requests.models import Response
 import beeline
 import json
 import os
@@ -24,15 +25,28 @@ def get_artwork_by_color(event, context):
     print('url', url)
 
     with beeline.tracer('fogg_api_call'):
-        res = requests.get(url)
+        beeline.add_context({'hex_color': hex_color})
+        try:
+            res = requests.get(url, timeout=5)
+            res.raise_for_status()
+            print('res non-error', res.status_code)
 
-        print('res', res.status_code)
-        body = res.json()
-        print(body)
+            body = res.json()
+            if res.status_code == 200:
+                beeline.add_context({'num_results': len(body['records'])})
+                return {
+                    'statusCode': res.status_code,
+                    'body': json.dumps({'records': body['records']})
+                }
 
-        num_results = (len(body['records']))
-        beeline.add_context({'hex_color': hex_color, 'num_results': num_results})
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'records': body['records']})
-        }
+            return {'statusCode': res.status_code}
+
+        except requests.exceptions.RequestException as e:
+            print('res error', res.status_code, e)
+
+            if res.status_code < 500:
+                return {
+                    'statusCode': res.status_code,
+                    'body': e.args[0] # Need to return body to avoid throwing a function output error (automatic 502)
+                }
+            raise
