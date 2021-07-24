@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "color-explorer"
+version = "0.0.1"
+description = "Simple lambda wrapping Harvard Art Museums API call using SAM"
+authors = ["isabeldepapel <isuchanek@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.26.0"
+python-dotenv = "^0.18.0"
+honeycomb-beeline = "^2.17.0"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.9.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

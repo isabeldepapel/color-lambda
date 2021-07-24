@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "color-explorer"
+s3_bucket = "lambda-test-bucket-idp"
+s3_prefix = "color-explorer"
+region = "us-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"

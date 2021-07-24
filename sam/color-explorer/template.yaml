@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  color-explorer
+
+  Sample SAM Template for color-explorer
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Parameters:
+  Staging:
+    Description: Stage name (required with SAM API Gateway, not regular API Gateway) like with serverless
+    Type: String
+    Default: dev
+
+Resources:
+  ColorExplorerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: color-explorer/
+      Handler: images.get_artwork_by_color
+      Runtime: python3.8
+      Environment:
+        Variables:
+          # CFN isn't comaptible with ssm-secure so this necessitates switch to secrets
+          # manager, which isn't part of the free tier so no. Ugh.
+          # FOGG_API_KEY: '{{resolve:ssm:/color-explorer/FOGG_API_KEY:1}}'
+          # HONEYCOMB_API_KEY: '{{resolve:ssm:/color-explorer/HONEYCOMB_API_KEY:1}}'
+          FOGG_API_KEY: NotAnApiKey
+          HONEYCOMB_API_KEY: AlsoNotAnApiKey
+      Events:
+        GetArtByColor:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /images
+            Method: get
+            RestApiId: !Ref ColorExplorerApi
+
+  ColorExplorerApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Staging
+
+  ColorExplorerLogs:
+    DependsOn: ColorExplorerFunction
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${ColorExplorerFunction}
+      RetentionInDays: 7
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ColorExplorerApi:
+    Description: "API Gateway endpoint URL for dev stage for Color Explorer function"
+    Value: !Sub "https://${ColorExplorerApi}.execute-api.${AWS::Region}.amazonaws.com/${Staging}/images"
+  ColorExplorerFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt ColorExplorerFunction.Arn
+  ColorExplorerFunctionIamRole:
+    Description: "Implicit IAM Role created for Color Explorer function"
+    Value: !GetAtt ColorExplorerFunctionRole.Arn
